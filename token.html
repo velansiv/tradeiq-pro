@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upstox Token Generator</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#04060f;color:#dce5f8;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.box{background:#080b1c;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:28px;width:100%;max-width:520px}
+.logo{font-size:22px;font-weight:800;margin-bottom:4px;font-family:monospace}
+.logo .g{color:#00c96e}.logo .p{color:#8b7fff}
+.sub{font-size:11px;color:#4a5a7a;margin-bottom:20px;font-family:monospace;letter-spacing:.06em}
+.lbl{font-family:monospace;font-size:9px;color:#4a5a7a;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;margin-top:14px;display:block}
+.field{width:100%;background:#0b0e22;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#dce5f8;font-family:monospace;font-size:13px;padding:11px 13px;outline:none;transition:border-color .15s}
+.field:focus{border-color:#8b7fff}
+.field::placeholder{color:#4a5a7a}
+.btn{width:100%;padding:12px;border:none;border-radius:9px;font-family:monospace;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.05em;transition:all .15s;margin-top:12px}
+.btn-g{background:#00c96e;color:#000}.btn-g:hover{background:#00ff88}
+.btn-p{background:rgba(139,127,255,.15);border:1px solid rgba(139,127,255,.3);color:#8b7fff}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.divider{height:1px;background:rgba(255,255,255,.07);margin:18px 0}
+.info{background:rgba(245,167,0,.07);border:1px solid rgba(245,167,0,.2);border-radius:8px;padding:12px;font-size:11px;color:#f5a700;line-height:1.65;font-family:monospace}
+.success{background:rgba(0,201,110,.07);border:1px solid rgba(0,201,110,.25);border-radius:8px;padding:14px;margin-top:14px;display:none}
+.success-lbl{font-family:monospace;font-size:9px;color:#00c96e;letter-spacing:.1em;margin-bottom:8px}
+.token-val{font-family:monospace;font-size:11px;color:#dce5f8;word-break:break-all;line-height:1.6;background:#04060f;padding:10px;border-radius:6px;border:1px solid rgba(255,255,255,.07)}
+.copy-btn{width:100%;padding:9px;border:none;border-radius:7px;background:rgba(139,127,255,.15);border:1px solid rgba(139,127,255,.3);color:#8b7fff;font-family:monospace;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;transition:all .15s}
+.err{background:rgba(255,61,90,.07);border:1px solid rgba(255,61,90,.2);border-radius:8px;padding:12px;margin-top:12px;font-size:11px;color:#ff3d5a;line-height:1.7;display:none;font-family:monospace;white-space:pre-wrap}
+.status{font-family:monospace;font-size:11px;color:#4a5a7a;text-align:center;margin-top:8px;min-height:16px}
+.url-box{background:#04060f;border:1px solid rgba(0,212,255,.2);border-radius:6px;padding:9px 11px;font-family:monospace;font-size:11px;color:#00d4ff;word-break:break-all;line-height:1.6;margin-top:8px}
+.vbox{background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.2);border-radius:8px;padding:12px;margin-bottom:4px}
+.vbox-title{font-family:monospace;font-size:9px;color:#00d4ff;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px}
+.step-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;font-size:12px;color:#7888a8;line-height:1.5}
+.sn{width:18px;height:18px;border-radius:50%;background:#00c96e;color:#000;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="logo"><span class="g">Upstox</span> <span class="p">Token</span> Generator</div>
+  <div class="sub">GENERATE DAILY ACCESS TOKEN · NO TERMINAL NEEDED</div>
+
+  <div class="info">
+    <div class="step-row"><div class="sn">1</div>Enter your Vercel URL + API Key + API Secret</div>
+    <div class="step-row"><div class="sn">2</div>Click Get Login Link, open it, log in with Upstox</div>
+    <div class="step-row"><div class="sn">3</div>Copy code from URL bar (after ?code=), paste below</div>
+    <div class="step-row" style="margin-bottom:0"><div class="sn">4</div>Click Generate Token, copy it into TradeIQ Pro</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="vbox">
+    <div class="vbox-title">// YOUR VERCEL URL (required to bypass CORS)</div>
+    <input class="field" id="vercel-url" type="text" placeholder="https://tradeiq-pro-xyz.vercel.app" style="margin-top:0">
+    <div style="font-size:10px;color:#4a5a7a;font-family:monospace;margin-top:5px;line-height:1.5">Your Vercel app URL. Found in your Vercel dashboard after deploying.</div>
+  </div>
+
+  <span class="lbl">API Key (Client ID)</span>
+  <input class="field" id="api-key" type="text" placeholder="316b743f-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+
+  <span class="lbl">API Secret (Client Secret)</span>
+  <input class="field" id="api-secret" type="password" placeholder="Your API Secret">
+
+  <button class="btn btn-p" onclick="showLoginLink()">GET LOGIN LINK</button>
+
+  <div id="login-section" style="display:none;margin-top:12px">
+    <span class="lbl">Open this URL in browser and log in with Upstox</span>
+    <div class="url-box" id="login-url"></div>
+    <button class="copy-btn" onclick="copyLogin()">COPY LOGIN URL</button>
+    <div style="font-size:11px;color:#f5a700;font-family:monospace;margin-top:8px;line-height:1.6;padding:9px;background:rgba(245,167,0,.06);border-radius:6px;border:1px solid rgba(245,167,0,.15)">
+After login you see a 404 page on localhost. That is CORRECT.
+Look at URL bar: http://localhost/?code=XXXXXX
+Copy everything after ?code= and paste it below.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <span class="lbl">Paste the code from URL bar here</span>
+  <input class="field" id="auth-code" type="text" placeholder="Paste the code= value here">
+
+  <button class="btn btn-g" id="gen-btn" onclick="generateToken()">GENERATE ACCESS TOKEN</button>
+  <div class="status" id="status"></div>
+  <div class="err" id="err"></div>
+
+  <div class="success" id="success">
+    <div class="success-lbl">YOUR ACCESS TOKEN (valid 24 hours)</div>
+    <div class="token-val" id="token-val"></div>
+    <button class="copy-btn" onclick="copyToken()">COPY TOKEN → PASTE INTO TRADEIQ PRO SIDEBAR</button>
+    <div style="font-size:10px;color:#4a5a7a;font-family:monospace;margin-top:8px;line-height:1.5">Regenerate every morning before 9:00 AM IST.</div>
+  </div>
+
+  <div class="divider"></div>
+  <div style="font-size:10px;color:#4a5a7a;font-family:monospace;line-height:1.55;text-align:center">
+    Credentials sent only to Upstox via your Vercel server. Never stored.
+  </div>
+</div>
+
+<script>
+let token='', loginUrl='';
+
+function showLoginLink(){
+  const key=document.getElementById('api-key').value.trim();
+  const secret=document.getElementById('api-secret').value.trim();
+  if(!key){showErr('Enter your API Key');return;}
+  if(!secret){showErr('Enter your API Secret');return;}
+  hideErr();
+  loginUrl='https://api.upstox.com/v2/login/authorization/dialog?response_type=code&client_id='+encodeURIComponent(key)+'&redirect_uri='+encodeURIComponent('http://localhost');
+  document.getElementById('login-url').textContent=loginUrl;
+  document.getElementById('login-section').style.display='block';
+  setStatus('Login URL ready. Copy it, open in browser, log in with Upstox.');
+}
+
+function copyLogin(){
+  navigator.clipboard.writeText(loginUrl).then(()=>{
+    const btn=document.querySelector('#login-section .copy-btn');
+    btn.textContent='COPIED!';setTimeout(()=>btn.textContent='COPY LOGIN URL',2000);
+  });
+}
+
+async function generateToken(){
+  const vercel=document.getElementById('vercel-url').value.trim().replace(/\/$/,'');
+  const key=document.getElementById('api-key').value.trim();
+  const secret=document.getElementById('api-secret').value.trim();
+  const code=document.getElementById('auth-code').value.trim();
+  hideErr();hideSuccess();
+  if(!key){showErr('Enter your API Key');return;}
+  if(!secret){showErr('Enter your API Secret');return;}
+  if(!code){showErr('Paste the authorization code from the URL bar');return;}
+  const btn=document.getElementById('gen-btn');
+  btn.disabled=true;btn.textContent='GENERATING...';
+  setStatus('Calling Upstox via your Vercel server...');
+
+  // Method 1: via Vercel proxy (best - no CORS)
+  if(vercel){
+    try{
+      const r=await fetch(vercel+'/api/upstox',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-action':'token'},
+        body:JSON.stringify({code,client_id:key,client_secret:secret,redirect_uri:'http://localhost'})
+      });
+      const d=await r.json();
+      const t=d?.access_token||d?.data?.access_token;
+      if(t){showSuccess(t);btn.disabled=false;btn.textContent='GENERATE ACCESS TOKEN';setStatus('');return;}
+      if(d?.message||d?.error) throw new Error(d.message||d.error);
+    }catch(e){
+      setStatus('Vercel proxy error: '+e.message+'. Trying direct...');
+    }
+  }
+
+  // Method 2: direct call (may work from https Vercel page)
+  try{
+    const params=new URLSearchParams({code,client_id:key,client_secret:secret,redirect_uri:'http://localhost',grant_type:'authorization_code'});
+    const r=await fetch('https://api.upstox.com/v2/login/authorization/token',{
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded','Accept':'application/json'},
+      body:params.toString()
+    });
+    const d=await r.json();
+    const t=d?.access_token||d?.data?.access_token;
+    if(t){showSuccess(t);}
+    else throw new Error(d?.message||d?.errors?.[0]?.message||JSON.stringify(d));
+  }catch(e){
+    if(e.message.includes('fetch')||e.message.includes('CORS')||e.message.includes('network')){
+      showErr('CORS is blocking the call.\n\nTo fix this:\n1. Make sure you have deployed TradeIQ Pro to Vercel\n2. Enter your Vercel URL at the top of this page\n   Example: https://tradeiq-pro-xyz.vercel.app\n3. Make sure the tradeiq-vercel-project.zip is deployed\n   (it contains the api/upstox.js proxy file)\n4. Try again\n\nAlternatively open this Token Generator on your Vercel URL:\nhttps://your-vercel-url.vercel.app/token.html');
+    }else{
+      showErr('Upstox error: '+e.message+'\n\nCode may have expired (codes last ~1 min).\nGo through the login URL again to get a fresh code.');
+    }
+  }
+  btn.disabled=false;btn.textContent='GENERATE ACCESS TOKEN';setStatus('');
+}
+
+function showSuccess(t){
+  token=t;
+  document.getElementById('token-val').textContent=t;
+  document.getElementById('success').style.display='block';
+  setStatus('Token generated successfully!');
+  hideErr();
+}
+function copyToken(){
+  navigator.clipboard.writeText(token).then(()=>{
+    const btn=document.querySelector('#success .copy-btn');
+    btn.textContent='COPIED — PASTE INTO TRADEIQ PRO NOW';
+    setTimeout(()=>btn.textContent='COPY TOKEN → PASTE INTO TRADEIQ PRO SIDEBAR',3000);
+  });
+}
+function showErr(msg){const e=document.getElementById('err');e.style.display='block';e.textContent=msg;}
+function hideErr(){document.getElementById('err').style.display='none';}
+function hideSuccess(){document.getElementById('success').style.display='none';}
+function setStatus(msg){document.getElementById('status').textContent=msg;}
+</script>
+</body>
+</html>
